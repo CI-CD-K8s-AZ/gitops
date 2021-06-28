@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+  namespace: prod
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: metalcloud.azurecr.io/frontend:v1.2-prod
+        imagePullPolicy: Always
+        ports:
+          - name: http-alt
+            containerPort: 80
+        livenessProbe:
+          initialDelaySeconds: 60
+          httpGet:
+            port: http-alt
+            path: /
+          periodSeconds: 60
+        readinessProbe:
+          httpGet:
+            port: http-alt
+            path: /
+          initialDelaySeconds: 60
+          periodSeconds: 60
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi

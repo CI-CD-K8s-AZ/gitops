@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: frontend
+  namespace: prod
+  labels:
+    app: frontend
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: frontend
+          servicePort: 8080
+    host: "metalcloud.cl"
+  tls:
+    - hosts:
+        - metalcloud.cl
+      secretName: frontend-secret-tls
